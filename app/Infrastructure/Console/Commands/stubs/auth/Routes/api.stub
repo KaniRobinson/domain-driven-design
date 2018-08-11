@@ -1,0 +1,21 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+*/
+    
+Route::middleware('guest')->group(function () {
+    Route::post('login', 'LoginController@login');
+    Route::post('register', 'RegisterController@register');
+    Route::post('confirm/{token}', 'RegisterController@confirm');
+    Route::post('resend', 'RegisterController@resend');
+    Route::post('forgot', 'ForgotPasswordController@forgot');
+    Route::post('reset/{token}', 'ForgotPasswordController@reset');
+});
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('logout', 'LoginController@logout');
+    Route::post('refresh', 'LoginController@refresh');
+});

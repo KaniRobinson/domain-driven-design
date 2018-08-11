@@ -1,0 +1,91 @@
+<?php
+
+namespace DummyNamespace\Infrastructure\Authentication\Proxies;
+
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use DummyNamespace\Domain\User\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use DummyNamespace\Domain\User\Notifications\User\ConfirmEmail;
+use DummyNamespace\Domain\User\Notifications\User\WelcomeEmail;
+
+class RegisterProxy
+{
+    /**
+     * Attempt to create a user
+     */
+    public function attemptRegister(Request $request)
+    {
+        $user = User::create([
+            'first_name' => $request->input('first_name'),
+            'last_name' => $request->input('last_name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+            'verification_token' => Str::random(60)
+        ]);
+
+        $user->notify(new ConfirmEmail($user));
+
+        return response()->json([
+            'success' => true
+        ]);
+    }
+
+    /**
+     * Attempt to resend confirmation email
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function attemptResend(Request $request)
+    {
+        $user = User::whereNotNull('verification_token')->where([
+            'email' => $request->input('email'),
+            'verified' => false
+        ])->first();
+
+        if(!is_null($user)) {
+            $user->notify(new ConfirmEmail($user));
+
+            return response()->json([
+                'success' => true
+            ]);
+        }
+
+        throw ValidationException::withMessages([
+            'email' => [
+                __('auth.confirm.already_verified')
+            ]
+        ]);
+    }
+
+    /**
+     * Attempt to Confirm User
+     */
+    public function attemptConfirm(Request $request, $token)
+    {
+        $user = User::where([
+            'verification_token' => $token, 
+            'verified' => false
+        ])->first();
+
+        if(!is_null($user)) {
+            $user->verified = true;
+            $user->verification_token = null;
+            $user->save();
+
+            $user->notify(new WelcomeEmail($user));
+
+            return response()->json([
+                'success' => true
+            ]);
+        }
+
+        throw ValidationException::withMessages([
+            'token' => [
+                __('auth.confirm.invalid_token')
+            ]
+        ]);
+    }
+}

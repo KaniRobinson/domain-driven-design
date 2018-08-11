@@ -1,0 +1,62 @@
+<?php
+
+namespace DummyNamespace\Infrastructure\Authentication\Controllers;
+
+use Illuminate\Http\Request;
+use DummyNamespace\Infrastructure\Controllers\Controller;
+use DummyNamespace\Infrastructure\Authentication\Proxies\RegisterProxy;
+use DummyNamespace\Infrastructure\Authentication\Validators\ResendRequest;
+use DummyNamespace\Infrastructure\Authentication\Validators\RegisterRequest;
+
+class RegisterController extends Controller
+{
+    /**
+     * Register Proxy
+     *
+     * @var LoginProxy
+     */
+    private $proxy;
+
+    /**
+     * Setup Register Proxy as a variable
+     *
+     * @param RegisterProxy $proxy
+     */
+    public function __construct(RegisterProxy $proxy)
+    {
+        $this->proxy = $proxy;
+    }
+
+    /**
+     * Register User Request
+     *
+     * @param RegisterRequest $request
+     * @return void
+     */
+    public function register(RegisterRequest $request)
+    {
+        return $this->proxy->attemptRegister($request);
+    }
+
+    /**
+     * Confirm User Request
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function confirm(Request $request, $token)
+    {
+        return $this->proxy->attemptConfirm($request, $token);
+    }
+
+    /**
+     * Resend Confirmation Email
+     *
+     * @param ResendRequest $request
+     * @return void
+     */
+    public function resend(ResendRequest $request)
+    {
+        return $this->proxy->attemptResend($request);
+    }
+}

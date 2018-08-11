@@ -1,0 +1,65 @@
+<?php
+
+namespace DummyNamespace\Infrastructure\Authentication\Controllers;
+
+use Illuminate\Http\Request;
+use DummyNamespace\Infrastructure\Controllers\Controller;
+use DummyNamespace\Infrastructure\Authentication\Proxies\LoginProxy;
+use DummyNamespace\Infrastructure\Authentication\Validators\LoginRequest;
+
+class LoginController extends Controller
+{
+    /**
+     * Login Proxy
+     *
+     * @var LoginProxy
+     */
+    private $proxy;
+
+    /**
+     * Setup Login Proxy as a variable
+     *
+     * @param LoginProxy $proxy
+     */
+    public function __construct(LoginProxy $proxy)
+    {
+        $this->proxy = $proxy;
+    }
+
+    /**
+     * User Login Authentication Method
+     *
+     * @param LoginRequest $request
+     * @return void
+     */
+    public function login(LoginRequest $request)
+    {
+        return $this->proxy->attemptLogin($request);
+    }
+
+    /**
+     * Refresh User Access Token
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function refresh(Request $request)
+    {
+        return $this->proxy->attemptRefresh($request);
+    }
+
+    /**
+     * Revoke User Access Token
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function logout(Request $request)
+    {
+        $this->proxy->attemptLogout($request);
+
+        return response()->json([
+            'success' => true
+        ]);
+    }
+}

@@ -1,0 +1,101 @@
+<?php
+
+namespace DummyNamespace\Infrastructure\Authentication\Proxies;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use DummyNamespace\Domain\User\Models\User;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
+
+class LoginProxy
+{
+    /**
+     * Proxy a request to the OAuth server.
+     *
+     * @param string $type
+     * @param array $data
+     */
+    public function proxy($type='password', $data=[])
+    {
+        $request = request();
+
+        $request->request->add([
+            'grant_type' => $type,
+            'client_id' => env('PASSWORD_CLIENT_ID'),
+            'client_secret' => env('PASSWORD_CLIENT_SECRET'),
+            'scope' => '*'
+        ]);
+        
+        $response = Route::dispatch($request->create(
+            '/oauth/token',
+            'POST'
+        ))->getContent();
+
+        return json_decode($response, true);
+    }
+
+    /**
+     * Attempt to create an access token using user credentials
+     *
+     * @param string $email
+     * @param string $password
+     */
+    public function attemptLogin(Request $request)
+    {
+        $user = User::where('email', $request->input('username'))->first();
+
+        if($user->verified === false) {
+            throw ValidationException::withMessages([
+                'email' => [
+                    __('auth.verified')
+                ],
+            ]);
+        }
+
+        if (!is_null($user)) {
+            return $this->proxy('password', [
+                'username' => $request->input('username'),
+                'password' => $request->input('password')
+            ]);
+        }
+
+        throw ValidationException::withMessages([
+            'username' => [
+                __('auth.failed')
+            ]
+        ]);
+    }
+
+    /**
+     * Attempt to refresh access token
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function attemptRefresh(Request $request)
+    {
+        return $this->proxy('refresh_token');
+    }
+
+    /**
+     * Attempt to revoke access token
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function attemptLogout(Request $request)
+    {
+        $token = $request->user()->token();
+
+        DB::table('oauth_refresh_tokens')
+            ->where('access_token_id', $token->id)
+            ->update([
+                'revoked' => true
+            ]);
+
+        $token->revoke();
+
+        return $token;
+    }
+}
