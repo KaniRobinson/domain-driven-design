@@ -19,6 +19,7 @@ $ composer install
 $ cp .env.example .env
 $ php artisan key:generate
 $ php artisan domain:auth
+$ php artisan migrate
 $ php artisan password:client --password
 ```
 
