@@ -18,7 +18,7 @@ return [
     'default_profile' => [
 
         'allow_origins' => [
-            '*'
+            'http://localhost:3000'
         ],
 
         'allow_methods' => [
@@ -32,7 +32,7 @@ return [
 
         'allow_headers' => [
             'Content-Type',
-            'X-Auth-Token',
+            'Accept',
             'Origin',
             'Authorization',
         ],

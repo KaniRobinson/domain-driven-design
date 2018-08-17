@@ -16,6 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
+        \App\Domain\User\Models\User::class => \App\Domain\User\Policies\UserPolicy::class,
     ];
 
     /**
@@ -33,7 +34,7 @@ class AuthServiceProvider extends ServiceProvider
             $router->forTransientTokens();
         });
         
-        Passport::tokensExpireIn(Carbon::now()->addMinutes(10));
+        Passport::tokensExpireIn(Carbon::now()->addDays(3));
         
         Passport::refreshTokensExpireIn(Carbon::now()->addDays(10));
 

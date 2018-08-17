@@ -34,4 +34,19 @@ class LoginRequest extends FormRequest
             ]
         ];
     }
+
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'username.required' => 'The email field is required.',
+            'username.email' => 'The email must be a valid email address.',
+            'username.exists' => 'The selected email is invalid.'
+        ];
+    }
 }

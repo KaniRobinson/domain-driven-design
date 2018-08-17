@@ -52,7 +52,7 @@ class WelcomeEmail extends Notification
                     ->subject('Welcome to the platform')
                     ->line("Hello {$this->user->first_name} {$this->user->last_name},")
                     ->line('Thank you for registering! Click the button to get started.')
-                    ->action('Click Here', url("/login"));
+                    ->action('Click Here', url(config('app.frontend_url') . "/login"));
     }
 
     /**

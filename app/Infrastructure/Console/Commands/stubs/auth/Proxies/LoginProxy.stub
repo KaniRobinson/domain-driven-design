@@ -30,9 +30,12 @@ class LoginProxy
         $response = Route::dispatch($request->create(
             '/oauth/token',
             'POST'
-        ))->getContent();
+        ));
 
-        return json_decode($response, true);
+        return [
+            'data' => json_decode($response->getContent(), true),
+            'statusCode' => $response->getStatusCode()
+        ];
     }
 
     /**
@@ -45,19 +48,23 @@ class LoginProxy
     {
         $user = User::where('email', $request->input('username'))->first();
 
-        if($user->verified === false) {
+        if($user->verified == false) {
             throw ValidationException::withMessages([
-                'email' => [
+                'username' => [
                     __('auth.verified')
                 ],
+                'verified' => false
             ]);
         }
 
         if (!is_null($user)) {
-            return $this->proxy('password', [
+            $response = $this->proxy('password', [
                 'username' => $request->input('username'),
                 'password' => $request->input('password')
             ]);
+
+            return response()
+                ->json($response['data'], $response['statusCode']);
         }
 
         throw ValidationException::withMessages([
@@ -75,7 +82,12 @@ class LoginProxy
      */
     public function attemptRefresh(Request $request)
     {
-        return $this->proxy('refresh_token');
+        $response = $this->proxy('refresh_token', [
+            'refresh_token' => $request->input('refresh_token')
+        ]);
+
+        return response()
+            ->json($response['data'], $response['statusCode']);
     }
 
     /**

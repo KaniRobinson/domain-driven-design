@@ -38,12 +38,13 @@ class Handler extends ExceptionHandler
         parent::report($exception);
     }
 
-    // Expired Token
-
-    // Resource Not Found
-
-    // Authorisation
-
+    /**
+     * Handle Exceptions for REST api
+     *
+     * @param Request $request
+     * @param Exception $exception
+     * @return void
+     */
     protected function handleException($request, $exception)
     {
         $reflect = new ReflectionClass($exception);
@@ -52,9 +53,9 @@ class Handler extends ExceptionHandler
             // Token Expired Exception
             case "AuthenticationException":
                 return response()->json([
-                    'error' => [
-                        'token' => [__('auth.token_expired')]
-                    ]
+                        'error' => [
+                            'token' => [__('auth.token_expired')]
+                        ]
                     ], 403);
                 break;
 
@@ -62,7 +63,7 @@ class Handler extends ExceptionHandler
             case "ModelNotFoundException":
                 return response()->json([
                     'error' => [
-                        'token' => [__('auth.model_not_found')]
+                        'resource' => [__('auth.model_not_found')]
                     ]
                 ], 404);
                 break;
@@ -71,7 +72,7 @@ class Handler extends ExceptionHandler
             case "AuthorizationException":
                 return response()->json([
                     'error' => [
-                        'token' => [__('auth.not_allowed')]
+                        'authorised' => [__('auth.not_allowed')]
                     ]
                 ], 403);
                 break;

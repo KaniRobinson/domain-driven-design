@@ -8,6 +8,7 @@
     
 Route::middleware('guest')->group(function () {
     Route::post('login', 'LoginController@login');
+    Route::post('refresh', 'LoginController@refresh');
     Route::post('register', 'RegisterController@register');
     Route::post('confirm/{token}', 'RegisterController@confirm');
     Route::post('resend', 'RegisterController@resend');
@@ -17,5 +18,4 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth:api')->group(function () {
     Route::post('logout', 'LoginController@logout');
-    Route::post('refresh', 'LoginController@refresh');
 });

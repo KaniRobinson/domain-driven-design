@@ -52,7 +52,7 @@ class ConfirmEmail extends Notification
                     ->subject('Confirm Email Address')
                     ->line("Hello {$this->user->first_name} {$this->user->last_name},")
                     ->line('Click the button to confirm your email address.')
-                    ->action('Confirm Email', url("/confirm/{$this->user->verification_token}"));
+                    ->action('Confirm Email', url(config('app.frontend_url') . "/confirm/{$this->user->verification_token}"));
     }
 
     /**

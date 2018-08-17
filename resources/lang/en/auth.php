@@ -20,7 +20,7 @@ return [
     'not_allowed' => 'You should not be here.',
     'failed' => 'These credentials do not match our records.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-    'verified' => 'This account is not verified.',
+    'verified' => 'This account is not verified. Please check your email to confirm.',
     'reset' => [
         'invalid_token' => 'This reset token does not exist or has expired.',
     ],
