@@ -10,6 +10,37 @@ A **Laravel** implementation of **Domain Driven Design** template with pre-built
     <img src="https://camo.githubusercontent.com/6ecf49deae9378956479133cb1de7a3f09fa9df1/68747470733a2f2f6c61726176656c2e636f6d2f6173736574732f696d672f636f6d706f6e656e74732f6c6f676f2d70617373706f72742e737667">
 </p>
 
+## Installation
+
+```
+$ git clone git@github.com:KaniRobinson/LaravelDDD.git ApplicationName
+$ cd ApplicationName/
+$ composer install
+$ cp .env.example .env
+$ php artisan key:generate
+$ php artisan domain:auth
+$ php artisan password:client --password
+```
+
+Update your .env file
+
+```
+APP_URL=http://api.something.com
+...
+APP_FRONTEND_URL=http://something.com
+...
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=database
+DB_USERNAME=username
+DB_PASSWORD=password
+...
+PASSWORD_CLIENT_ID=1
+PASSWORD_CLIENT_SECRET=1234567890abcdefghijlmnopqrstuvwxyz
+```
+
+Finito.
+
 ## Laravel Domain Generators
 
 > **Note:** These Generators are extended from Laravels default Generators which means you can still use the default options that are set on the make commands.
