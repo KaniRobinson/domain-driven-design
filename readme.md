@@ -13,7 +13,7 @@ A **Laravel** implementation of **Domain Driven Design** template with pre-built
 ## Installation
 
 ```
-$ git clone git@github.com:KaniRobinson/LaravelDDD.git ApplicationName
+$ git clone git@github.com:KaniRobinson/domain-driven-design.git ApplicationName
 $ cd ApplicationName/
 $ composer install
 $ cp .env.example .env
